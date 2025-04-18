@@ -1,3 +1,4 @@
+//spare programming
 public class MaxDistanceCalculator {
     public static int maxDistance(int c, int e, int w) {
         int max = 0;
