@@ -1,17 +1,39 @@
-from heapq import heappop, heappush
-def astar(grid, start, goal):
-    H = lambda x, y: abs(goal[0]-x)+abs(goal[1]-y)
-    open, visited = [(H(*start), 0, start, [])], set()
-    while open:
-        _, cost, (x, y), path = heappop(open)
-        if (x, y) in visited: continue
-        path = path + [(x, y)]
-        if (x, y) == goal: return path
-        visited.add((x, y))
-        for dx, dy in [(0,1),(1,0),(-1,0),(0,-1)]:
-            nx, ny = x+dx, y+dy
-            if 0<=nx<len(grid) and 0<=ny<len(grid[0]) and not grid[nx][ny]:
-                heappush(open, (cost+1+H(nx, ny), cost+1, (nx, ny), path))
-grid = [[0,0,0,0],[1,1,0,1],[0,0,0,0],[0,1,1,0]]
-path = astar(grid, (0,0), (3,3))
-print(path)
+import heapq
+
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'D': 2, 'E': 5},
+    'C': {'F': 3},
+    'D': {'G': 1},
+    'E': {'G': 2},
+    'F': {'G': 5},
+    'G': {}
+}
+
+h = {
+    'A': 7, 'B': 6, 'C': 5, 'D': 3, 'E': 4, 'F': 6, 'G': 0
+}
+
+def astar(start, goal):
+    q = [(h[start], 0, start, [])]
+    visited = set()
+
+    while q:
+        f, g, n, path = heapq.heappop(q)
+
+        if n in visited:
+            continue
+        visited.add(n)
+
+        path = path + [n]
+
+        if n == goal:
+            print("Path:", '->'.join(path), "\nCost:", g)
+            return
+
+        for nbr, cost in graph[n].items():
+            if nbr not in visited:
+                heapq.heappush(q, (g + cost + h[nbr], g + cost, nbr, path))
+
+    print("No path found.")
+astar('A', 'G')
